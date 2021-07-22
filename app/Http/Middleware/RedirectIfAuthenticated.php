@@ -23,6 +23,9 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
+                if (Auth::user()->hasAnyRole(['project-manager', 'super-admin'])) {
+                    return redirect()->route('dashboard.index');
+                }
                 return redirect(RouteServiceProvider::HOME);
             }
         }
