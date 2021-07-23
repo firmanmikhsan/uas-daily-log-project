@@ -87,7 +87,9 @@ class ProjectController extends Controller
      */
     public function edit($id)
     {
-        //
+        $project = Project::findOrFail($id);
+        $data['project'] = $project;
+        return view('admin.project.edit', $data);
     }
 
     /**
@@ -99,7 +101,31 @@ class ProjectController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            "name" => ["required", "string"],
+            "description" => ["required", "string", "max:250"],
+            "image" => ["nullable", "image"]
+        ]);
+        $validator->validate();
+
+        DB::beginTransaction();
+        try {
+            $project = Project::findOrFail($id);
+            if ($request->has('image')) {
+                $image = $request->file('image');
+                $image = Storage::putFileAs('/images/project', $image, now()->timestamp."-".Str::slug($request->name).".".$image->guessClientExtension());
+                $project->image = $image;
+            }
+            $project->name = $request->name;
+            $project->description = $request->description;
+            $project->save();
+
+            DB::commit();
+            return redirect()->route('dashboard.projects.index')->with('status', 'Project successfully updated.');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            throw $th;
+        }
     }
 
     /**

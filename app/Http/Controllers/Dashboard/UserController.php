@@ -3,7 +3,12 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Validator;
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
@@ -14,7 +19,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        //
+        $users = User::with('roles')->get();
+        $data['users'] = $users;
+        return view('admin.user.index', $data);
     }
 
     /**
@@ -24,7 +31,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $roles = Role::all();
+        $data['roles'] = $roles;
+        return view('admin.user.create', $data);
     }
 
     /**
@@ -35,7 +44,30 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            "name" => ["required", "string"],
+            "email" => ["required", "email"],
+            "password" => ["required", "string", "confirmed"],
+            "role_names" => ["required", "array", "min:1"],
+            "role_names.*" => ["required", "exists:roles,name"]
+        ]);
+        $validator->validate();
+
+        DB::beginTransaction();
+        try {
+            $user = User::create([
+                "name" => $request->name,
+                "email" => $request->email,
+                "password" => Hash::make($request->password)
+            ]);
+            $user->assignRole($request->role_names);
+
+            DB::commit();
+            return redirect()->route('dashboard.users.index')->with('status', 'User created successfuly.');
+        } catch (\Throwable $th) {
+            DB::rollBack(); 
+            throw $th;
+        }
     }
 
     /**
@@ -57,7 +89,12 @@ class UserController extends Controller
      */
     public function edit($id)
     {
-        //
+        $roles = Role::all();
+        $data['roles'] = $roles;
+
+        $user = User::with('roles')->find($id);
+        $data['user'] = $user;
+        return view('admin.user.edit', $data);
     }
 
     /**
@@ -69,7 +106,32 @@ class UserController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $validator = Validator::make($request->all(), [
+            "name" => ["required", "string"],
+            "email" => ["required", "email"],
+            "password" => ["nullable", "string", "confirmed"],
+            "role_names" => ["required", "array", "min:1"],
+            "role_names.*" => ["required", "exists:roles,name"]
+        ]);
+        $validator->validate();
+
+        DB::beginTransaction();
+        try {
+            $user = User::findOrFail($id);
+            $user->name = $request->name;
+            $user->email = $request->email;
+            if ($request->has('password')) {
+                $user->password = Hash::make($request->password);
+            }
+            $user->save();
+            $user->syncRoles($request->role_names);
+
+            DB::commit();
+            return redirect()->route('dashboard.users.index')->with('status', 'User update successfuly.');
+        } catch (\Throwable $th) {
+            DB::rollBack(); 
+            throw $th;
+        }
     }
 
     /**
@@ -80,6 +142,9 @@ class UserController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $user = User::findOrFail($id);
+        $user->delete();
+
+        return redirect()->route('dashboard.users.index')->with('status', 'User successfully deleted.');
     }
 }
