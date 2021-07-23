@@ -21,12 +21,12 @@
 <section class="content">
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12">
+            <div class="col-sm-12 col-md-12 col-lg-6">
                 <div class="card">
                     <div class="card-header">
                         <div class="row justify-content-between align-items-center">
                             <h3 class="card-title">
-                                Projects list table
+                                Add new Project
                             </h3>
                         </div>
                     </div>
@@ -53,6 +53,9 @@
                             </div>
                             <div class="form-group">
                                 <label for="projectImage">Project Image</label>
+                                <div class="text-left my-3">
+                                    <img src="{{ Storage::url('images/default/placeholder.png') }}" alt="{{ Storage::url('images/default/placeholder.png') }}" class="img-fluid" style="max-height: 250px" id="project-image-preview">
+                                </div>
                                 <div class="input-group">
                                     <div class="custom-file">
                                         <input type="file" class="custom-file-input @error('image') is-invalid @enderror" id="projectImage" name="image">
@@ -77,6 +80,11 @@
 </section>
 {{-- End of Main Content --}}
 @endsection
+
+@include('components.admin.image-uploader.image-upload-preview', [
+    "uploader" => "projectImage",
+    "previewer" => "project-image-preview"
+])
 
 @push('js')
     <script src="{{ asset('adminLTE/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>

@@ -21,6 +21,10 @@
                     "route" => "#",
                     "title" => "Master Data",
                     "icon" => "fas fa-archive",
+                    "actives" => [
+                        "dashboard/users*",
+                        "dashboard/projects*",
+                    ]
                 ])
                     @include('components.admin.sidebar.sidebar-item', [
                         "icon" => "far fa-circle",
@@ -29,8 +33,14 @@
                     ])
                     @include('components.admin.sidebar.sidebar-item', [
                         "icon" => "far fa-circle",
+                        "route" => route('dashboard.users.index'),
+                        'title' => "Employee"
+                    ])
+                    @include('components.admin.sidebar.sidebar-item', [
+                        "icon" => "far fa-circle",
                         "route" => route('dashboard.projects.index'),
-                        'title' => "Project"
+                        'title' => "Project",
+                        "active" => "dashboard/projects*",
                     ])
                 @endcomponent
                 @component('components.admin.sidebar.sidebar-tree-view', [
@@ -47,6 +57,22 @@
                         "icon" => "far fa-circle",
                         "route" => route('dashboard.projects.index'),
                         'title' => "Project Report"
+                    ])
+                @endcomponent
+                @component('components.admin.sidebar.sidebar-tree-view', [
+                    "route" => "#",
+                    "title" => "Employes",
+                    "icon" => "fas fa-user-cog",
+                ])
+                    @include('components.admin.sidebar.sidebar-item', [
+                        "icon" => "far fa-circle",
+                        "route" => route('dashboard.users.index'),
+                        'title' => "Project Manager"
+                    ])
+                    @include('components.admin.sidebar.sidebar-item', [
+                        "icon" => "far fa-circle",
+                        "route" => route('dashboard.projects.index'),
+                        'title' => "Developer"
                     ])
                 @endcomponent
                 {{-- @include('components.admin.sidebar.sidebar-item', [

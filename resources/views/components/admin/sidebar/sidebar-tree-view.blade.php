@@ -1,6 +1,6 @@
-<li class="nav-item">
-    <a href="#" class="nav-link">
-        <i class="nav-icon fas fa-copy"></i>
+<li class="nav-item {{ request()->is($actives ?? '') ? 'menu-open' : '' }}">
+    <a href="#" class="nav-link {{ request()->is($actives ?? '') ? 'active' : '' }}">
+        <i class="nav-icon {{ $icon }}"></i>
         <p>
             {{ $title }}
             <i class="fas fa-angle-left right"></i>

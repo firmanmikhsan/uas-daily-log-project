@@ -1,20 +1,19 @@
 <?php
 
-namespace App\View\Components\Admin\Sidebar;
+namespace App\View\Components\Admin\ImageUploader;
 
 use Illuminate\View\Component;
 
-class SidebarTreeView extends Component
+class ImageUploadPreview extends Component
 {
-
     /**
      * Create a new component instance.
      *
      * @return void
      */
-    public function __construct($asd)
+    public function __construct()
     {
-
+        //
     }
 
     /**
@@ -24,6 +23,6 @@ class SidebarTreeView extends Component
      */
     public function render()
     {
-        return view('components.admin.sidebar.sidebar-tree-view');
+        return view('components.admin.image-uploader.image-upload-preview');
     }
 }
