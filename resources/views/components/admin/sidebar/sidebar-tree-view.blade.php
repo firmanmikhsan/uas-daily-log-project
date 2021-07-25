@@ -1,4 +1,4 @@
-<li class="nav-item {{ request()->is($actives ?? '') ? 'menu-open' : '' }}">
+<li class="nav-item {{ request()->is($actives ?? '') ? 'menu-open menu-is-opening' : '' }}">
     <a href="#" class="nav-link {{ request()->is($actives ?? '') ? 'active' : '' }}">
         <i class="nav-icon {{ $icon }}"></i>
         <p>

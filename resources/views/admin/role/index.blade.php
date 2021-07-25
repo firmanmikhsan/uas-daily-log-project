@@ -14,12 +14,12 @@
     <div class="container-fluid">
         <div class="row mb-2">
             <div class="col-sm-6">
-                <h1>User List</h1>
+                <h1>Role List</h1>
             </div>
             <div class="col-sm-6">
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Home</a></li>
-                    <li class="breadcrumb-item active">User List</li>
+                    <li class="breadcrumb-item active">Role List</li>
                 </ol>
             </div>
         </div>
@@ -34,10 +34,10 @@
                     <div class="card-header">
                         <div class="row justify-content-between align-items-center">
                             <h3 class="card-title">
-                                Users list table
+                                Roles list table
                             </h3>
-                            <a href="{{ route('dashboard.users.create') }}" class="btn btn-primary">
-                                Add new user
+                            <a href="{{ route('dashboard.roles.create') }}" class="btn btn-primary">
+                                Add new role
                             </a>
                         </div>
                     </div>
@@ -53,28 +53,28 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Roles</th>
+                                    <th>Guard</th>
+                                    <th>Permission</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                @foreach ($users as $user)
+                                @foreach ($roles as $role)
                                     <tr>
-                                        <td>{{ $user->name }}</td>
-                                        <td>{{ $user->email }}</td>
+                                        <td>{{ $role->name }}</td>
+                                        <td>{{ $role->guard_name }}</td>
                                         <td>
                                             <ul>
-                                                @foreach ($user->roles as $role)
-                                                    <li>{{ $role->name }}</li>
+                                                @foreach ($role->permissions as $permission)
+                                                    <li>{{ $permission->name }}</li>
                                                 @endforeach
                                             </ul>
                                         </td>
                                         <td>
-                                            <a href="{{ route('dashboard.users.edit', ['user'=>$user->id]) }}" class="text-white btn btn-warning">
+                                            <a href="{{ route('dashboard.roles.edit', ['role' => $role->id]) }}" class="text-white btn btn-warning">
                                                 <i class="fas fa-pencil-alt"></i>
                                             </a>
-                                            <button class="btn btn-danger btn-delete" title="Delete User" data-user-id="{{ $user->id }}">
+                                            <button class="btn btn-danger btn-delete" title="Delete Role" data-role-id="{{ $role->id }}">
                                                 <i class="fa fa-trash-alt"></i>
                                             </button>
                                         </td>
@@ -84,8 +84,8 @@
                             <tfoot>
                                 <tr>
                                     <th>Name</th>
-                                    <th>Email</th>
-                                    <th>Roles</th>
+                                    <th>Guard</th>
+                                    <th>Permission</th>
                                     <th>Action</th>
                                 </tr>
                             </tfoot>
@@ -124,16 +124,16 @@
     <script>
         $(function () {
             $('.btn-delete').on('click', function () {
-                let userId = $(this).data('userId');
+                let roleId = $(this).data('roleId');
                 Swal.fire({
-                    title: 'Delete User',
-                    text: 'Are you sure want to delete this user?',
+                    title: 'Delete Role',
+                    text: 'Are you sure want to delete this role?',
                     type: 'question',
                     showCancelButton: true,
                 }).then(result => {
                     if (result.value) {
-                        let deleteUrl = "{{ route('dashboard.users.destroy', ':id') }}";
-                        deleteUrl = deleteUrl.replace(':id', userId);
+                        let deleteUrl = "{{ route('dashboard.roles.destroy', ':id') }}";
+                        deleteUrl = deleteUrl.replace(':id', roleId);
 
                         let deleteForm = $('#delete-form');
                         deleteForm.attr('action', deleteUrl)
@@ -149,8 +149,7 @@
             });
             $("#project-table").DataTable({
                 "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"],
-                "order": [[ 2, "desc" ]]
+                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
             }).buttons().container().appendTo('#project-table_wrapper .col-md-6:eq(0)');
         });
     </script>

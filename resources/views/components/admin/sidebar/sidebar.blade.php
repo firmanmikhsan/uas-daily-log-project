@@ -24,23 +24,39 @@
                     "actives" => [
                         "dashboard/users*",
                         "dashboard/projects*",
+                        "dashboard/roles*",
+                        "dashboard/permissions*"
                     ]
                 ])
                     @include('components.admin.sidebar.sidebar-item', [
                         "icon" => "far fa-circle",
                         "route" => route('dashboard.users.index'),
-                        'title' => "Users"
-                    ])
-                    @include('components.admin.sidebar.sidebar-item', [
-                        "icon" => "far fa-circle",
-                        "route" => route('dashboard.users.index'),
-                        'title' => "Employee"
+                        'title' => "Users",
+                        "active" => "dashboard/users*",
                     ])
                     @include('components.admin.sidebar.sidebar-item', [
                         "icon" => "far fa-circle",
                         "route" => route('dashboard.projects.index'),
                         'title' => "Project",
                         "active" => "dashboard/projects*",
+                    ])
+                    @include('components.admin.sidebar.sidebar-item', [
+                        "icon" => "far fa-circle",
+                        "route" => route('dashboard.roles.index'),
+                        'title' => "Roles",
+                        "active" => "dashboard/roles*",
+                    ])
+                    @include('components.admin.sidebar.sidebar-item', [
+                        "icon" => "far fa-circle",
+                        "route" => route('dashboard.permissions.index'),
+                        'title' => "Permission",
+                        "active" => "dashboard/permissions*",
+                    ])
+                    @include('components.admin.sidebar.sidebar-item', [
+                        "icon" => "far fa-circle",
+                        "route" => route('dashboard.positions.index'),
+                        'title' => "Job Permission",
+                        "active" => "dashboard/positions*",
                     ])
                 @endcomponent
                 @component('components.admin.sidebar.sidebar-tree-view', [

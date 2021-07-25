@@ -7,7 +7,8 @@
 @endpush
 
 @php
-    $roleNames = $user->roles->pluck('name');
+    $roleNames = $roles->pluck('name');
+    $userRoleNames = $user->roles->pluck('name');
 @endphp
 
 @section('content')
@@ -84,7 +85,7 @@
                                 <label>User Role</label>
                                 <select class="roles @error('role_names') is-invalid @enderror" multiple="multiple" data-placeholder="Select roles" style="width: 100%;" name="role_names[]" id="role_names">
                                     @foreach ($roles as $role)
-                                        <option value="{{ $role->name }}" {{ in_array($role->name, old('role_names', $roleNames->toArray())) ? 'selected="selected"' : '' }}>{{ $role->name }}</option>
+                                        <option value="{{ $role->name }}" {{ in_array($role->name, old('role_names', $userRoleNames->toArray())) ? 'selected="selected"' : '' }}>{{ $role->name }}</option>
                                     @endforeach
                                 </select>
                                 @error('role_names')

@@ -41,4 +41,14 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function jobPosition()
+    {
+        return $this->hasOneThrough(JobPosistion::class, Profile::class);
+    }
+
+    public function profile()
+    {
+        return $this->hasOne(Profile::class, "user_id", "id");
+    }
 }

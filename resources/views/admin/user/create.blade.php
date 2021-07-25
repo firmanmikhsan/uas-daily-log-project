@@ -21,7 +21,7 @@
                 <ol class="breadcrumb float-sm-right">
                     <li class="breadcrumb-item"><a href="{{ route('dashboard.index') }}">Home</a></li>
                     <li class="breadcrumb-item"><a href="{{ route('dashboard.users.index') }}">User List</a></li>
-                    <li class="breadcrumb-item">Add Project</li>
+                    <li class="breadcrumb-item">Add User</li>
                 </ol>
             </div>
         </div>
