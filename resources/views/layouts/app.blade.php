@@ -9,9 +9,6 @@
 
     <title>{{ config('app.name', 'Laravel') }}</title>
 
-    <!-- Scripts -->
-    <script src="{{ asset('js/app.js') }}" defer></script>
-
     <!-- Fonts -->
     <link rel="dns-prefetch" href="//fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
@@ -24,9 +21,15 @@
     <link rel="stylesheet" href="{{ asset('adminLTE/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
     <!-- Theme style -->
     <link rel="stylesheet" href="{{ asset('adminLTE/dist/css/adminlte.min.css') }}">
+
+    @stack('css')
+
 </head>
-<body class="hold-transition login-page">
-    <div id="app" class="login-box">
+<body class="hold-transition {{ (!request()->is('login*') && !request()->is('register*')) ? "" : "login-page" }}">
+    {{-- navbar --}}
+    @include('components.navbars.navbar')
+
+    <div id="app">
         @yield('content')
     </div>
     <!-- jQuery -->
@@ -35,5 +38,7 @@
     <script src="{{ asset('adminLTE/plugins/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <!-- AdminLTE App -->
     <script src="{{ asset('adminLTE/dist/js/adminlte.min.js') }}"></script>
+    @stack('js')
+
 </body>
 </html>

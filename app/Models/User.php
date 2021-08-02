@@ -2,6 +2,9 @@
 
 namespace App\Models;
 
+use App\Models\Project\AssignedProject;
+use App\Models\Project\Project;
+use App\Models\Project\ProjectReport;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -50,5 +53,15 @@ class User extends Authenticatable
     public function profile()
     {
         return $this->hasOne(Profile::class, "user_id", "id");
+    }
+
+    public function projects()
+    {
+        return $this->belongsToMany(Project::class, 'assigned_projects', "user_id", "project_id")->withTimestamps();
+    }
+
+    public function reports()
+    {
+        return $this->hasMany(ProjectReport::class, "user_id", "id");
     }
 }

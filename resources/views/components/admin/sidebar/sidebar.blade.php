@@ -17,87 +17,94 @@
         {{-- Sidebar menu --}}
         <nav class="mt-2">
             <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
-                @component('components.admin.sidebar.sidebar-tree-view', [
-                    "route" => "#",
-                    "title" => "Master Data",
-                    "icon" => "fas fa-archive",
-                    "actives" => [
-                        "dashboard/users*",
-                        "dashboard/projects*",
-                        "dashboard/roles*",
-                        "dashboard/permissions*"
-                    ]
-                ])
-                    @include('components.admin.sidebar.sidebar-item', [
-                        "icon" => "far fa-circle",
-                        "route" => route('dashboard.users.index'),
-                        'title' => "Users",
-                        "active" => "dashboard/users*",
+                @role('super-admin')
+                    @component('components.admin.sidebar.sidebar-tree-view', [
+                        "route" => "#",
+                        "title" => "Master Data",
+                        "icon" => "fas fa-archive",
+                        "actives" => [
+                            "dashboard/users*",
+                            "dashboard/projects*",
+                            "dashboard/roles*",
+                            "dashboard/permissions*",
+                            "dashboard/positions*"
+                        ]
                     ])
-                    @include('components.admin.sidebar.sidebar-item', [
-                        "icon" => "far fa-circle",
-                        "route" => route('dashboard.projects.index'),
-                        'title' => "Project",
-                        "active" => "dashboard/projects*",
-                    ])
-                    @include('components.admin.sidebar.sidebar-item', [
-                        "icon" => "far fa-circle",
-                        "route" => route('dashboard.roles.index'),
-                        'title' => "Roles",
-                        "active" => "dashboard/roles*",
-                    ])
-                    @include('components.admin.sidebar.sidebar-item', [
-                        "icon" => "far fa-circle",
-                        "route" => route('dashboard.permissions.index'),
-                        'title' => "Permission",
-                        "active" => "dashboard/permissions*",
-                    ])
-                    @include('components.admin.sidebar.sidebar-item', [
-                        "icon" => "far fa-circle",
-                        "route" => route('dashboard.positions.index'),
-                        'title' => "Job Permission",
-                        "active" => "dashboard/positions*",
-                    ])
-                @endcomponent
+                        @include('components.admin.sidebar.sidebar-item', [
+                            "icon" => "far fa-circle",
+                            "route" => route('dashboard.users.index'),
+                            'title' => "Users",
+                            "active" => "dashboard/users*",
+                        ])
+                        @include('components.admin.sidebar.sidebar-item', [
+                            "icon" => "far fa-circle",
+                            "route" => route('dashboard.projects.index'),
+                            'title' => "Project",
+                            "active" => "dashboard/projects*",
+                        ])
+                        @include('components.admin.sidebar.sidebar-item', [
+                            "icon" => "far fa-circle",
+                            "route" => route('dashboard.roles.index'),
+                            'title' => "Roles",
+                            "active" => "dashboard/roles*",
+                        ])
+                        @include('components.admin.sidebar.sidebar-item', [
+                            "icon" => "far fa-circle",
+                            "route" => route('dashboard.permissions.index'),
+                            'title' => "Permission",
+                            "active" => "dashboard/permissions*",
+                        ])
+                        @include('components.admin.sidebar.sidebar-item', [
+                            "icon" => "far fa-circle",
+                            "route" => route('dashboard.positions.index'),
+                            'title' => "Job Position",
+                            "active" => "dashboard/positions*",
+                        ])
+                    @endcomponent
+                @endunlessrole
                 @component('components.admin.sidebar.sidebar-tree-view', [
                     "route" => "#",
                     "title" => "Project",
                     "icon" => "fas fa-project-diagram",
+                    "actives" => [
+                        "dashboard/assignments*",
+                        "dashboard/reports*",
+                    ]
                 ])
                     @include('components.admin.sidebar.sidebar-item', [
                         "icon" => "far fa-circle",
-                        "route" => route('dashboard.users.index'),
-                        'title' => "Project Assignment"
+                        "route" => route('dashboard.assignments.index'),
+                        'title' => "Project Assignment",
+                        "active" => "dashboard/assignments*"
                     ])
                     @include('components.admin.sidebar.sidebar-item', [
                         "icon" => "far fa-circle",
-                        "route" => route('dashboard.projects.index'),
-                        'title' => "Project Report"
+                        "route" => route('dashboard.reports.index'),
+                        'title' => "Project Report",
+                        "active" => "dashboard/reports*"
                     ])
                 @endcomponent
-                @component('components.admin.sidebar.sidebar-tree-view', [
+                @include('components.admin.sidebar.sidebar-item', [
+                    "icon" => "fas fa-sign-out-alt",
                     "route" => "#",
-                    "title" => "Employes",
-                    "icon" => "fas fa-user-cog",
+                    'title' => "Logout",
+                    "id" => "logout"
                 ])
-                    @include('components.admin.sidebar.sidebar-item', [
-                        "icon" => "far fa-circle",
-                        "route" => route('dashboard.users.index'),
-                        'title' => "Project Manager"
-                    ])
-                    @include('components.admin.sidebar.sidebar-item', [
-                        "icon" => "far fa-circle",
-                        "route" => route('dashboard.projects.index'),
-                        'title' => "Developer"
-                    ])
-                @endcomponent
-                {{-- @include('components.admin.sidebar.sidebar-item', [
-                    "icon" => "fas fa-user",
-                    "route" => route('dashboard.users.index'),
-                    'title' => "Users"
-                ]) --}}
             </ul>
         </nav>
         {{-- End of Sidebar menu --}}
     </div>
 </aside>
+<form id="logout-form" method="post" class="d-none" action="{{ route('logout') }}">
+    @csrf
+</form>
+@push('js')
+    <script>
+        $(function() {
+            $("#logout").click(function (e) { 
+                let logoutForm = $('#logout-form');
+                logoutForm.submit();
+            });
+        })
+    </script>
+@endpush

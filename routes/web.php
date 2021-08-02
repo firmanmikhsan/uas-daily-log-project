@@ -3,9 +3,14 @@
 use App\Http\Controllers\Dashboard\DashboardController;
 use App\Http\Controllers\Dashboard\JobPositionController;
 use App\Http\Controllers\Dashboard\PermissionController;
+use App\Http\Controllers\Dashboard\ProjectAssignmentController;
 use App\Http\Controllers\Dashboard\ProjectController;
 use App\Http\Controllers\Dashboard\RoleController;
 use App\Http\Controllers\Dashboard\UserController;
+use App\Http\Controllers\Dashboard\UserReportController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ProjectReportController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -26,8 +31,13 @@ Route::get('/', function () {
 
 Auth::routes();
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.', "middleware" => "auth"], function(){
+Route::group(['prefix' => 'home', 'as' => 'home.', 'middleware' => 'auth'], function(){
+    Route::get('/', [HomeController::class, 'index']);
+    Route::resource('profiles', ProfileController::class);
+    Route::resource('reports', ProjectReportController::class);
+});
+
+Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.', "middleware" => ["auth","role:super-admin|project-manager"]], function(){
     Route::get('/', DashboardController::class)->name('index');
     Route::resources([
         'users' => UserController::class,
@@ -35,5 +45,7 @@ Route::group(['prefix' => 'dashboard', 'as' => 'dashboard.', "middleware" => "au
         'roles' => RoleController::class,
         'permissions' => PermissionController::class,
         'positions' => JobPositionController::class,
+        'assignments' => ProjectAssignmentController::class,
+        'reports' => UserReportController::class,
     ]);
 });

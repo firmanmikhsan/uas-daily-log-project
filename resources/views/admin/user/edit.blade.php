@@ -41,10 +41,27 @@
                             </h3>
                         </div>
                     </div>
-                    <form action="{{ route('dashboard.users.update', ["user" => $user->id]) }}" method="post">
+                    <form enctype="multipart/form-data" action="{{ route('dashboard.users.update', ["user" => $user->id]) }}" method="post">
                         @csrf
                         @method('put')
                         <div class="card-body">
+                            <div class="form-group">
+                                <label for="avatarImage">Avatar</label>
+                                <div class="text-center my-3">
+                                    <img src="{{ $user->profile->avatar ?? Storage::url('images/default/placeholder.png') }}" alt="{{ $user->profile->avatar ?? Storage::url('images/default/placeholder.png') }}" class="rounded-circle" style="max-height: 150px" id="avatar-image-preview">
+                                </div>
+                                <div class="input-group">
+                                    <div class="custom-file">
+                                        <input type="file" class="custom-file-input @error('avatar') is-invalid @enderror" id="avatarImage" name="avatar">
+                                        <label class="custom-file-label" for="avatarImage">Choose file</label>
+                                    </div>
+                                </div>
+                                @error('avatar')
+                                    <span class="text-danger small" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
                             <div class="form-group">
                                 <label for="fullName">Fullname</label>
                                 <input type="text" name="name" id="fullName" class="form-control @error('name') is-invalid @enderror" placeholder="User Name" value="{{ old('name', $user->name) }}">
@@ -64,6 +81,24 @@
                                 @enderror
                             </div>
                             <div class="form-group">
+                                <label for="phoneNumber">Phone Number</label>
+                                <input type="text" name="phone_number" id="phoneNumber" class="form-control @error('phone_number') is-invalid @enderror" placeholder="+6289658806617" value="{{ old('phone_number', $user->profile->phone_number ?? "") }}">
+                                @error('phone_number')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label for="address">Alamat</label>
+                                <textarea name="address" id="address" cols="30" rows="5" class="form-control @error('address') is-invalid @enderror">{{ old('address', $user->profile->address ?? "") }}</textarea>
+                                @error('address')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="form-group">
                                 <label for="password">Password</label>
                                 <input type="password" name="password" id="password" class="form-control @error('password') is-invalid @enderror" placeholder="Password" value="{{ old('password') }}">
                                 @error('password')
@@ -76,6 +111,20 @@
                                 <label for="password">Password Confirmation</label>
                                 <input type="password" name="password_confirmation" id="password_confirmation" class="form-control @error('password_confirmation') is-invalid @enderror" placeholder="Password Confirmation" value="{{ old('password_confirmation') }}">
                                 @error('password')
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ $message }}</strong>
+                                    </span>
+                                @enderror
+                            </div>
+                            <div class="form-group">
+                                <label>User Role</label>
+                                <select name="job_position_id" id="job_position_id" class="form-control  @error('job_position_id') is-invalid @enderror"">
+                                    <option value="">Select job position</option>
+                                    @foreach ($job_positions as $position)
+                                        <option {{ old('job_position_id', $user->profile->job_position_id ?? "") == $position->id ? "selected" : "" }} value="{{ $position->id }}">{{ $position->name }}</option>
+                                    @endforeach
+                                </select>
+                                @error('job_position_id')
                                     <span class="invalid-feedback" role="alert">
                                         <strong>{{ $message }}</strong>
                                     </span>
@@ -111,7 +160,18 @@
 {{-- End of Main Content --}}
 @endsection
 
+@include('components.admin.image-uploader.image-upload-preview', [
+    "uploader" => "avatarImage",
+    "previewer" => "avatar-image-preview"
+])
+
 @push('js')
+    <script src="{{ asset('adminLTE/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
+    <script>
+        $(function () {
+            bsCustomFileInput.init();
+        });
+    </script>
     <!-- Select2 -->
     <script src="{{ asset('adminLTE/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>

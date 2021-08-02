@@ -3,12 +3,13 @@
 namespace App\Http\Controllers\Dashboard;
 
 use App\Http\Controllers\Controller;
-use App\Models\JobPosistion;
+use App\Models\Project\Project;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class JobPositionController extends Controller
+class ProjectAssignmentController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +18,11 @@ class JobPositionController extends Controller
      */
     public function index()
     {
-        $positions = JobPosistion::get();
-        $data['positions'] = $positions;
-        return view('admin.jobs.index', $data);
+        $assignedProjecsts = User::whereHas('roles', function($role){
+            $role->where('name', 'employee');
+        })->with('projects')->get();
+        $data['assigned_projects'] = $assignedProjecsts;
+        return view('admin.assignment.index', $data);
     }
 
     /**
@@ -29,7 +32,7 @@ class JobPositionController extends Controller
      */
     public function create()
     {
-        return view('admin.jobs.create');
+        //
     }
 
     /**
@@ -40,19 +43,7 @@ class JobPositionController extends Controller
      */
     public function store(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            "name" => ["required", "string", "unique:job_posistions,name"]
-        ]);
-        $validator->validate();
-        DB::beginTransaction();
-        try {
-            $positions = JobPosistion::create(['name' => $request->name]);
-            DB::commit();
-            return redirect()->route('dashboard.positions.index')->with('status', 'Position successfuly created.');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
+        //
     }
 
     /**
@@ -63,7 +54,7 @@ class JobPositionController extends Controller
      */
     public function show($id)
     {
-        
+        //
     }
 
     /**
@@ -74,9 +65,12 @@ class JobPositionController extends Controller
      */
     public function edit($id)
     {
-        $position = JobPosistion::findOrFail($id);
-        $data['position'] = $position;
-        return view('admin.jobs.edit', $data);
+        $assignedProjecsts = User::with('projects')->find($id);
+        $data['assigned_projects'] = $assignedProjecsts;
+
+        $projects = Project::get();
+        $data['projects'] = $projects;
+        return view('admin.assignment.edit', $data);
     }
 
     /**
@@ -89,14 +83,17 @@ class JobPositionController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-            "name" => ["required", "string", "unique:job_posistions,name,$id"]
+            "project_ids" => ["required", "min:1"],
+            "project_ids.*" => ["exists:projects,id"]
         ]);
         $validator->validate();
         DB::beginTransaction();
         try {
-            $positions = JobPosistion::findOrFail($id)->update(['name' => $request->name]);
+            $user = User::findOrFail($id);
+            $user->projects()->sync($request->project_ids);
+
             DB::commit();
-            return redirect()->route('dashboard.positions.index')->with('status', 'Position successfuly updated.');
+            return redirect()->route('dashboard.assignments.index')->with('status', 'Project assigned successfully.');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -111,8 +108,6 @@ class JobPositionController extends Controller
      */
     public function destroy($id)
     {
-        $job = JobPosistion::findorFail($id);
-        $job->delete();
-        return redirect()->route('dashboard.positions.index')->with('status', 'Position successfuly deleted.');
+        //
     }
 }

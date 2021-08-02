@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Project\AssignedProject;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -23,6 +26,12 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        $projects = Auth::user()->projects;
+        $data['projects'] = $projects;
+
+        $timelines = Auth::user()->reports()->whereDate('created_at', Carbon::today()->format('Y-m-d'))->get()->groupBy('project.name');
+        $data['user_timelines'] = $timelines;
+        
+        return view('home', $data);
     }
 }

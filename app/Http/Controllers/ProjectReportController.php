@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Http\Controllers\Dashboard;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
-use App\Models\JobPosistion;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
-class JobPositionController extends Controller
+class ProjectReportController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -17,9 +17,7 @@ class JobPositionController extends Controller
      */
     public function index()
     {
-        $positions = JobPosistion::get();
-        $data['positions'] = $positions;
-        return view('admin.jobs.index', $data);
+        //
     }
 
     /**
@@ -29,7 +27,7 @@ class JobPositionController extends Controller
      */
     public function create()
     {
-        return view('admin.jobs.create');
+        //
     }
 
     /**
@@ -41,14 +39,30 @@ class JobPositionController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            "name" => ["required", "string", "unique:job_posistions,name"]
+            "project_id" => ["required", "exists:projects,id"],
+            "hours" => ["required", "numeric", "min:1", "max:12"],
+            "report" => ["required", "string"]
         ]);
         $validator->validate();
+
         DB::beginTransaction();
         try {
-            $positions = JobPosistion::create(['name' => $request->name]);
+            $user = Auth::user();
+
+            $totalHoursToday = $user->reports()->whereDate('created_at', Carbon::today()->format('Y-m-d'))->sum('hours');
+
+            if ($totalHoursToday+$request->houres >= 12) {
+                return back()->with('time_limit', 'Anda tidak bisa bekerja lebih dari 12 jam sehari ya :). harap jangan bekerja berlebihan')->withInput($request->all());
+            }
+
+            $user->reports()->create([
+                "project_id" => $request->project_id,
+                "hours" => $request->hours,
+                "description" => $request->report,
+            ]);
+
             DB::commit();
-            return redirect()->route('dashboard.positions.index')->with('status', 'Position successfuly created.');
+            return redirect()->route('home.')->with('status', 'Report successfully created');
         } catch (\Throwable $th) {
             DB::rollBack();
             throw $th;
@@ -63,7 +77,7 @@ class JobPositionController extends Controller
      */
     public function show($id)
     {
-        
+        //
     }
 
     /**
@@ -74,9 +88,7 @@ class JobPositionController extends Controller
      */
     public function edit($id)
     {
-        $position = JobPosistion::findOrFail($id);
-        $data['position'] = $position;
-        return view('admin.jobs.edit', $data);
+        //
     }
 
     /**
@@ -88,19 +100,7 @@ class JobPositionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $validator = Validator::make($request->all(), [
-            "name" => ["required", "string", "unique:job_posistions,name,$id"]
-        ]);
-        $validator->validate();
-        DB::beginTransaction();
-        try {
-            $positions = JobPosistion::findOrFail($id)->update(['name' => $request->name]);
-            DB::commit();
-            return redirect()->route('dashboard.positions.index')->with('status', 'Position successfuly updated.');
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            throw $th;
-        }
+        //
     }
 
     /**
@@ -111,8 +111,6 @@ class JobPositionController extends Controller
      */
     public function destroy($id)
     {
-        $job = JobPosistion::findorFail($id);
-        $job->delete();
-        return redirect()->route('dashboard.positions.index')->with('status', 'Position successfuly deleted.');
+        //
     }
 }
