@@ -17,5 +17,12 @@ Sistem reporting karyawan berbasis web menggunakan Laravel 8.x
 - run `php artisan serve`
 - kemudian buka di browser `localhost:8000` atau `127.0.0.1:8000`.
 - Catatan: port `8000` bisa saja berubah. maka harap perhatikan port yang keluar di terminal
+### 5. User Autentikasi
+- super admin: 
+  - email: super.admin@mail.com
+  - password: password
+- project manager: 
+  - email: project.manager@mail.com
+  - password: password
 ## Daftar library yang digunakan
 - [spatie laravel permission](https://spatie.be/docs/laravel-permission/v4/introduction)
