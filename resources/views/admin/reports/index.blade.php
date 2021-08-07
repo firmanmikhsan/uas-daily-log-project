@@ -84,7 +84,7 @@
                                         </td>
                                         <td>
                                             <a href="{{ route('dashboard.reports.show', ['report'=>$user->id, "date" => $date ?? Carbon\Carbon::today()->format('Y-m-d') ]) }}" class="text-white btn btn-warning">
-                                                <i class="fas fa-pencil-alt"></i>
+                                                <i class="fas fa-eye"></i>
                                             </a>
                                         </td>
                                     </tr>
